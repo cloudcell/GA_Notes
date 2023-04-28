@@ -1,4 +1,6 @@
 \documentclass{article}
+% \usepackage{lmodern} % for any font size
+% \usepackage{anyfontsize} % for any font size
 \usepackage{graphicx} % Required for inserting images
 \usepackage{amsmath}
 \usepackage{mathrsfs}
@@ -7,11 +9,43 @@
 \usepackage{xcolor}
 \usepackage[margin=1in]{geometry}
 \usepackage{array}
-\usepackage{bm}
+\usepackage{bm} % for bold math
 \usepackage{colortbl}
 \usepackage{caption}
 \usepackage{chngcntr}
 \usepackage{ifthen}
+
+% ---------------------------------------------------------------------------------------------------------------------
+% source of the solution: https://tex.stackexchange.com/questions/63545/big-tilde-in-math-mode
+\usepackage{scalerel}
+\usepackage{stackengine}
+\usepackage{wasysym}
+\newcommand\reallywidetilde[1]{\ThisStyle{%
+  \setbox0=\hbox{$\SavedStyle#1$}%
+  \stackengine{-.1\LMpt}{$\SavedStyle#1$}{%
+    \stretchto{\scaleto{\SavedStyle\mkern.2mu\AC}{.5150\wd0}}{.6\ht0}%
+  }{O}{c}{F}{T}{S}%
+}}
+% ---------------------------------------------------------------------------------------------------------------------
+% to resolve conflict between bm and wasysym packages
+% source: https://tex.stackexchange.com/questions/591635/wasysym-not-compatible-with-bm
+\DeclareFontFamily{U}{wasy}{}
+\DeclareFontShape{U}{wasy}{m}{n}{
+     <-5.5> wasy5
+  <5.5-6.5> wasy6
+  <6.5-7.5> wasy7
+  <7.5-8.5> wasy8
+  <8.5-9.5> wasy9
+     <9.5-> wasy10
+}{}
+\DeclareFontShape{U}{wasy}{b}{n}{
+ <-10> ssub * wasy/m/n
+ <10-> wasyb10
+ }{}
+\DeclareFontShape{U}{wasy}{bx}{n}{ <-> ssub * wasy/b/n}{}
+\DeclareFontShape{U}{wasy}{m}{sl}{ <-> wasysl10 }{}
+\DeclareFontShape{U}{wasy}{m}{it}{ <-> ssub * wasy/m/sl }{}
+% ---------------------------------------------------------------------------------------------------------------------
 
 
 \usepackage{fancyhdr}
@@ -25,6 +59,10 @@
 \title{Draft Notes on 3D Projective Geometric Algebra $\mathbb{G}_{(3,0,1)}$}
 \author{cloudcell}
 \date{April 2023}
+
+
+% % \newcommand\wideTilde[1]{\accentset{\sim{}}{#1}}
+% \newcommand\wideTilde[1]{\stackengine{0pt}{$#1$}{\smash{$\sim$}}{O}{c}{F}{T}{S}}
 
 
 \newcounter{mytablecounter}
@@ -134,6 +172,7 @@ sign under a reflection.
     In plain English, the geometric product of two multivectors is the sum of all possible dimension (not grade) 
     combinations of the two multivectors. The GP multiplication table is shown in Table \ref{table:gp} below.
 
+\subsubsection{\textbf{Properties of Geometric Product}}
 
 \paragraph{}\textbf{Associativity}: GP is associative: $$(ab)c = a(bc).$$
 
@@ -148,17 +187,58 @@ In other words, $ab = ba$ if and only if $a \wedge b = 0$.
 
 \subsection{\textbf{Vector Division}}
 
-Geometric product inversion or the inverse of a vector $a$ is defined as $$a^{-1} = \frac{a}{a \cdot a} = \frac {a}{\Vert{a}\Vert^2}.$$
-Vectors with zero norm are not invertible. This includes the zero vector, whose norm is zero:
-$$\Vert{e_0}\Vert^2 = e_0 \cdot e_0 = 0.$$
-\textbf{Example:} the inverse of the pseudoscalar $I_3$ (defined as $I_3 = e_1 e_2 e_3$) is defined as follows:
+\paragraph{}
+    Division, as a concept in Geometric Algebra, is slightly different from the division in scalar algebra. 
+    In Geometric Algebra, division is not always possible, and when it is, it is often performed by 
+    multiplying with an inverse element because Geometric Algebra deals with multivectors, which are 
+    sums of scalar, vector, bivector, and higher-grade elements. 
+
+\paragraph{}
+    The vector division of two multivectors $b$ and $a$ is defined as $$b/a = ba^{-1},$$
+    where $a^{-1}$ is the inverse of $a$. However, the inverse of a multivector does not always 
+    exist. It typically exists only for non-degenerate multivectors, such as non-zero scalars 
+    and non-degenerate blades (simple multivectors that can be factored into a product of linearly 
+    independent vectors). 
+    
+    The general formula for the inverse of a multivector is as follows [3]:
+
+    $$a^{-1} = \frac{\tilde{a}}{(a\tilde{a})}.$$
+    
+    For vectors, the inverse can be calculated as follows:
+
+    $$a^{-1} = \frac{a}{a \cdot a} = \frac {a}{\Vert{a}\Vert^2}.$$
+    
+    Vectors with zero norm are not invertible. In PGA, this includes the zero vector, whose norm is zero:
+
+    $$\Vert{e_0}\Vert^2 = e_0 \cdot e_0 = 0.$$
+
+    
+
+\paragraph{}\textbf{Example:} the inverse of the pseudoscalar $I_3$ (defined as $I_3 = e_1 e_2 e_3$) is defined as follows:
+
 $$I_3^{-1} = \frac{I_3}{I_3 \cdot I_3} = \frac {I_3}{\Vert{I_3}\Vert^2} = \frac {I_3}{-1} = -I_3.$$
 
 An inversion of a pseudoscalar is its reverse [3]: $$I_n^{-1} = \tilde{I_n}.$$
 
+\paragraph{}\textbf{Example:} the division of a vector $a = e_{0} + e_{1} + e_{01} + e_{02}$ by a vector 
+$b = e_1 + e_2 + e_{012}$ is defined as follows:
+
+$$a/b = (e_{0} + e_{1} + e_{01} + e_{02}) / (e_1 + e_2 + e_{012})$$
+$$= (e_0 + e_1 + e_{01} + e_{02})(e_1 + e_2 + e_{012})^{-1}$$
+$$= (e_0 + e_1 + e_{01} + e_{02})(\reallywidetilde{e_1 + e_2 + e_{012}})/((e_1 + e_2 + e_{012})(\reallywidetilde{e_1 + e_2 + e_{012}}))$$
+$$= (e_0 + e_1 + e_{01} + e_{02})({e_1 + e_2 - e_{012}})/(((e_1 + e_2 + e_{012})({e_1 + e_2 - e_{012}}))$$
+$$= (e_0 + e_1 + e_{01} + e_{02})({e_1 + e_2 - e_{012}})/2 = (2 + 2e_0 - e_{01} + e_{02}) / 2$$
+$$= 1 + e_0 - \frac{1}{2}e_{01} + \frac{1}{2}e_{02}.$$
+
+ 
+
+\subsubsection{\textbf{Properties of Vector Division}}
+
 \paragraph{}\textbf{Noncommutativity}: The division of vectors is not commutative in general. Thus, it is important to
 remember that the division by a vector is not the same as the multiplication by its inverse. The side of the division
 matters. For example, $$a^{-1}b \neq ba^{-1}.$$
+
+\todo{TODO}
 
 \subsection{\textbf{Outer Product}}
 
@@ -174,6 +254,8 @@ $$= (\lambda_a \mu_b - \mu_a \lambda_b) e_1 \wedge e_2.$$
 The easiest way to understand the outer product is to first consider the table defining the geometric product of two multivectors $a$ and $b$. 
 The resulting multivector is formed only out of pairs of basis vectors from $a$ and $b$ that do not share a common basis vector.
 Thus at multiplication, no basis vectors contract.
+
+\subsubsection{\textbf{Properties of Outer Product}}
 
 \paragraph{}\textbf{Asymmetry}:
 $$a \wedge b = -b \wedge a.$$
@@ -206,6 +288,10 @@ or, rather, the result of the product between such a pair of multivector units i
 
 \textbf{Example}: the inner product of two vectors $a = e_0 + e_1 + e_{01} + e_{02}$ and $b = e_1 + e_2 + e_{12}$ 
 is defined as follows: $$a \cdot b = (e_0 + e_1 + e_{01} + e_{02}) \cdot (e_1 + e_2 + e_{12}) = 1 + 2e_0 + e_2.$$
+
+\subsubsection{\textbf{Properties of Inner Product}}
+
+\todo{TODO}
 
 \subsection{\textbf{Scalar Product}}
 $$ A * B = \sum_{r,s} \langle \langle A \rangle_{r} \langle B \rangle_{s} \rangle_{0}.$$
@@ -425,7 +511,8 @@ Hence, it is possible to construct the GP from the contraction axiom as follows:
     % reference a table gp for the geometric product
     % use narrow tabs in the table to make it fit on the page
 
-    \begin{center}  \tiny
+    \begin{center}  
+        \tiny % use a smaller font size for the table
         \label{table:gp} % Assign a unique label for referencing
         % \mycaption[label]{Cayley Table} % Here you define the table name
         \renewcommand{\arraystretch}{1.8}
