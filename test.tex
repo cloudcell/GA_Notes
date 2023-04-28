@@ -1,0 +1,70 @@
+\documentclass{article}
+\usepackage{caption}
+
+% Create a new counter for the custom numbered tables
+\newcounter{customTableCounter}
+\DeclareCaptionLabelFormat{customTableLabel}{Table #1}
+\captionsetup[table]{labelformat=customTableLabel}
+
+% Define a new command for custom table numbering
+\newcommand{\customtablecaption}[1]{%
+  \stepcounter{customTableCounter}%
+  \caption{#1}
+  \label{table:\thecustomTableCounter}
+}
+
+\begin{document}
+
+% A regular table without a custom label
+\begin{table}[h!]
+\centering
+\caption{Unnumbered Table}
+\begin{tabular}{|c|c|c|}
+\hline
+A & B & C \\ \hline
+1 & 2 & 3 \\ \hline
+4 & 5 & 6 \\ \hline
+\end{tabular}
+\end{table}
+
+% A table with a custom label
+\begin{table}[h!]
+\centering
+\customtablecaption{Numbered Table 1}
+\begin{tabular}{|c|c|c|}
+\hline
+D & E & F \\ \hline
+7 & 8 & 9 \\ \hline
+10 & 11 & 12 \\ \hline
+\end{tabular}
+\end{table}
+
+% Another regular table without a custom label
+\begin{table}[h!]
+\centering
+\caption{Unnumbered Table 2}
+\begin{tabular}{|c|c|c|}
+\hline
+G & H & I \\ \hline
+13 & 14 & 15 \\ \hline
+16 & 17 & 18 \\ \hline
+\end{tabular}
+\end{table}
+
+% A table with a custom label
+\begin{table}[h!]
+\centering
+\customtablecaption{Numbered Table 2}
+\begin{tabular}{|c|c|c|}
+\hline
+J & K & L \\ \hline
+19 & 20 & 21 \\ \hline
+22 & 23 & 24 \\ \hline
+\end{tabular}
+\end{table}
+
+Reference to the first custom numbered table: Table \ref{table:1}
+
+Reference to the second custom numbered table: Table \ref{table:2}
+
+\end{document}
